@@ -43,7 +43,7 @@ export default function SignInPage() {
     <div className="min-h-screen flex items-center justify-center bg-white p-6">
       <div className="w-full max-w-[400px] space-y-6">
         <div className="text-center">
-          <h1 className="text-3xl font-semibold text-black">Welcome back</h1>
+          <h1 className="text-3xl font-semibold text-black">Welcome EndoConnect</h1>
           <p className="text-gray-600 text-sm mt-2">Please enter your details</p>
         </div>
         
