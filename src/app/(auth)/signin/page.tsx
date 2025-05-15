@@ -99,13 +99,13 @@ export default function SignInPage() {
             </div>
           </div>
 
-          <button
+          {/* <button
             onClick={handleGoogleSignIn}
             className="w-full flex items-center justify-center gap-2 border text-black border-gray-300 py-2 rounded-md hover:bg-gray-50 transition-colors"
           >
             <FcGoogle className="text-xl" />
             Sign in with Google
-          </button>
+          </button> */}
 
           <p className="text-center text-sm text-gray-600">
             Don't have an account?{" "}
