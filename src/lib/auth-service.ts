@@ -23,35 +23,32 @@ export const authService = {
       throw error;
     }
 
+    // Check if email is confirmed
+    if (!data.user?.email_confirmed_at) {
+      throw new Error('Please verify your email before signing in');
+    }
+
     return data;
   },
 
   async signUp(data: SignUpData) {
     const { email, password, ...profileData } = data;
 
-    // First create the auth user
+    // Create the auth user with email confirmation
     const { data: authData, error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: {
+          first_name: profileData.firstName,
+          last_name: profileData.lastName,
+        },
+        emailRedirectTo: `${window.location.origin}/auth/callback`
+      }
     });
 
     if (error) {
       throw error;
-    }
-
-    // After successful authentication, insert user info into user_info table
-    const { error: userInfoError } = await supabase
-      .from('chearful_users')
-      .insert({
-        user_id: authData.user?.id,
-        first_name: profileData.firstName,
-        last_name: profileData.lastName,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      });
-
-    if (userInfoError) {
-      throw userInfoError;
     }
 
     return authData;
@@ -62,5 +59,48 @@ export const authService = {
     if (error) {
       throw error;
     }
+  },
+
+  async resendConfirmationEmail(email: string) {
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback`
+      }
+    });
+
+    if (error) {
+      throw error;
+    }
+  },
+
+  async checkEmailConfirmation() {
+    const { data: { user }, error } = await supabase.auth.getUser();
+    
+    if (error) {
+      throw error;
+    }
+
+    return !!user?.email_confirmed_at;
+  },
+
+  async signInWithGoogle() {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/onboarding`,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        },
+      },
+    });
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
   }
 };

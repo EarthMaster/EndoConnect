@@ -2,89 +2,83 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { authService } from "@/lib/auth-service";
 import { supabase } from "@/lib/supabase";
-import { User } from "@supabase/supabase-js";
 
 interface AuthContextType {
-  isAuthenticated: boolean;
-  user: User | null;
-  login: (email: string, password: string) => Promise<void>;
-  logout: () => Promise<void>;
+  user: any;
+  signIn: () => Promise<void>;
+  signOut: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
-}
+const publicRoutes = ['/signin', '/signup'];
 
-export default function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState<any>(null);
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-    // Check current session
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setIsAuthenticated(!!session);
-      setUser(session?.user ?? null);
-    };
-
-    checkSession();
-
-    // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      setIsAuthenticated(!!session);
-      setUser(session?.user ?? null);
-
-      // Redirect logic
-      if (!session && 
-          pathname !== "/signin" && 
-          !pathname.startsWith("/signup")) {
-        router.push("/signin");
+      if (event === 'SIGNED_IN') {
+        setUser(session?.user ?? null);
+        router.push('/welcome');
+      } else if (event === 'SIGNED_OUT') {
+        setUser(null);
+        router.push('/signin');
       }
     });
 
-    // Cleanup subscription
+    // Check initial auth state
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      
+      // Redirect logic
+      if (!session && !publicRoutes.includes(pathname)) {
+        router.push('/signin');
+      } else if (session && publicRoutes.includes(pathname)) {
+        router.push('/welcome');
+      }
+    });
+
     return () => {
       subscription.unsubscribe();
     };
-  }, [pathname, router]);
+  }, [router, pathname]);
 
-  const login = async (email: string, password: string) => {
-    try {
-      const { user, session } = await authService.signIn({ email, password });
+  const signIn = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/welcome`
+      }
+    });
 
-      // Successful login will trigger the onAuthStateChange listener
-      router.push("/onboarding");
-    } catch (error) {
-      console.error("Login failed:", error);
-      throw error;
+    if (error) {
+      console.error('Error signing in:', error.message);
     }
   };
 
-  const logout = async () => {
-    try {
-      await authService.signOut();
-      // Successful logout will trigger the onAuthStateChange listener
-      router.push("/signin");
-    } catch (error) {
-      console.error("Logout failed:", error);
-      throw error;
+  const signOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error('Error signing out:', error.message);
     }
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
+    <AuthContext.Provider value={{ user, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 }
 

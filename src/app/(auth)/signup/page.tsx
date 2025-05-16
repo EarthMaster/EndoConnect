@@ -7,11 +7,16 @@ import { authService } from '@/lib/auth-service'
 import Image from 'next/image'
 import Link from 'next/link'
 import { FcGoogle } from 'react-icons/fc'
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 
-export default function SignupPage() {
+export default function SignUp() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
+  const [showConfirmation, setShowConfirmation] = useState(false)
+  const [email, setEmail] = useState('')
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -33,8 +38,10 @@ export default function SignupPage() {
     setError('')
 
     try {
+      console.log(formData);
       await authService.signUp(formData)
-      router.push('/onboarding')
+      setEmail(formData.email)
+      setShowConfirmation(true)
     } catch (err: any) {
       setError(err.message || 'Failed to sign up')
     } finally {
@@ -42,117 +49,193 @@ export default function SignupPage() {
     }
   }
 
-  const handleGoogleSignIn = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/onboarding`,
-      },
-    })
+  const handleResendEmail = async () => {
+    setIsLoading(true)
+    setError('')
 
-    if (error) {
-      setError(error.message)
+    try {
+      await authService.resendConfirmationEmail(email)
+      setError('Confirmation email resent! Please check your inbox.')
+    } catch (err: any) {
+      setError(err.message || 'Failed to resend confirmation email')
+    } finally {
+      setIsLoading(false)
     }
   }
 
+  const handleGoogleSignIn = async () => {
+    try {
+      setIsLoading(true)
+      setError('')
+      
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/screening`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
+        },
+      })
+
+      if (error) {
+        throw error
+      }
+    } catch (err: any) {
+      setError(err.message || 'Failed to sign up with Google')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  if (showConfirmation) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white p-6">
+        <div className="w-full max-w-[400px] space-y-6">
+          <div className="text-center">
+            <h1 className="text-2xl font-semibold text-black">Check your email</h1>
+            <p className="text-gray-600 text-sm mt-2">
+              We've sent a confirmation link to {email}
+            </p>
+          </div>
+
+          {error && (
+            <div className="bg-red-50 text-red-500 p-3 rounded-md text-sm">
+              {error}
+            </div>
+          )}
+
+          <div className="space-y-4">
+            <p className="text-gray-600 text-sm text-center">
+              Didn't receive the email? Check your spam folder or
+            </p>
+            <button
+              onClick={handleResendEmail}
+              disabled={isLoading}
+              className="w-full text-[#1E5542] py-2 rounded-md hover:underline transition-colors disabled:opacity-50"
+            >
+              {isLoading ? 'Sending...' : 'Resend confirmation email'}
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white p-6">
-      <div className="w-full max-w-[400px] space-y-6">
-        <div className="text-center">
-          <h1 className="text-2xl font-semibold text-black">Create your account</h1>
-          <p className="text-gray-600 text-sm mt-2">Enter your details to get started</p>
+    <main className="flex min-h-screen flex-col items-center justify-center p-4 bg-gradient-to-b from-purple-50 to-white">
+      <Card className="w-full max-w-md p-6 space-y-6">
+        <div className="text-center space-y-4">
+          <h1 className="text-3xl font-bold text-purple-900">Criar Conta</h1>
+          <p className="text-gray-600">
+            Comece sua jornada de autocuidado e conhecimento
+          </p>
         </div>
 
-        {error && (
-          <div className="bg-red-50 text-red-500 p-3 rounded-md text-sm">
-            {error}
-          </div>
-        )}
-
         <form onSubmit={handleSignUp} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm text-gray-700 mb-1">First Name</label>
-              <input
-                type="text"
-                name="firstName"
-                value={formData.firstName}
-                onChange={handleInputChange}
-                required
-                className="w-full px-3 py-2 text-gray-500 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#1E5542]"
-              />
-            </div>
-            <div>
-              <label className="block text-sm text-gray-700 mb-1">Last Name</label>
-              <input
-                type="text"
-                name="lastName"
-                value={formData.lastName}
-                onChange={handleInputChange}
-                required
-                className="w-full px-3 py-2 text-gray-500 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#1E5542]"
-              />
-            </div>
+          <div className="space-y-2">
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+              Nome
+            </label>
+            <Input
+              id="name"
+              type="text"
+              placeholder="Seu nome completo"
+              required
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleInputChange}
+            />
           </div>
 
-          <div>
-            <label className="block text-sm text-gray-700 mb-1">Email</label>
-            <input
+          <div className="space-y-2">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              Email
+            </label>
+            <Input
+              id="email"
               type="email"
+              placeholder="seu@email.com"
+              required
               name="email"
               value={formData.email}
               onChange={handleInputChange}
-              required
-              className="w-full px-3 py-2 text-gray-500 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#1E5542]"
             />
           </div>
 
-          <div>
-            <label className="block text-sm text-gray-700 mb-1">Password</label>
-            <input
+          <div className="space-y-2">
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              Senha
+            </label>
+            <Input
+              id="password"
               type="password"
+              placeholder="••••••••"
+              required
               name="password"
               value={formData.password}
               onChange={handleInputChange}
-              required
-              minLength={6}
-              className="w-full px-3 py-2 text-gray-500 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#1E5542]"
             />
           </div>
 
-          <button
+          <div className="space-y-2">
+            <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700">
+              Confirmar Senha
+            </label>
+            <Input
+              id="confirm-password"
+              type="password"
+              placeholder="••••••••"
+              required
+            />
+          </div>
+
+          <div className="flex items-center">
+            <input
+              id="terms"
+              type="checkbox"
+              className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
+              required
+            />
+            <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
+              Eu concordo com os{" "}
+              <Link
+                href="/terms"
+                className="text-purple-600 hover:text-purple-500"
+              >
+                Termos de Uso
+              </Link>{" "}
+              e{" "}
+              <Link
+                href="/privacy"
+                className="text-purple-600 hover:text-purple-500"
+              >
+                Política de Privacidade
+              </Link>
+            </label>
+          </div>
+
+          <Button
             type="submit"
-            disabled={isLoading}
-            className="w-full bg-[#1E5542] text-white py-2 rounded-md hover:bg-[#164434] transition-colors disabled:opacity-50"
+            className="w-full bg-purple-600 hover:bg-purple-700 text-white"
           >
-            {isLoading ? 'Creating account...' : 'Create account'}
-          </button>
+            Criar Conta
+          </Button>
         </form>
 
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300" />
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white text-gray-500">Or continue with</span>
-          </div>
+        <div className="text-center">
+          <p className="text-sm text-gray-600">
+            Já tem uma conta?{" "}
+            <Link
+              href="/signin"
+              className="text-purple-600 hover:text-purple-500 font-medium"
+            >
+              Entrar
+            </Link>
+          </p>
         </div>
-
-        {/* <button
-          onClick={handleGoogleSignIn}
-          className="w-full flex items-center justify-center gap-2 border border-gray-300 text-black py-2 rounded-md hover:bg-gray-50 transition-colors"
-        >
-          <FcGoogle className="text-xl" />
-          Sign up with Google
-        </button> */}
-
-        <p className="text-center text-sm text-gray-600">
-          Already have an account?{' '}
-          <Link href="/signin" className="text-[#FF8C00] hover:underline">
-            Sign in
-          </Link>
-        </p>
-      </div>
-    </div>
+      </Card>
+    </main>
   )
 }
