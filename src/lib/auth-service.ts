@@ -43,7 +43,7 @@ export const authService = {
           first_name: profileData.firstName,
           last_name: profileData.lastName,
         },
-        emailRedirectTo: `${window.location.origin}/auth/callback`
+        emailRedirectTo: `https://endo-connect.vercel.app/auth/callback`
       }
     });
 
@@ -66,7 +66,7 @@ export const authService = {
       type: 'signup',
       email,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`
+        emailRedirectTo: `https://endo-connect.vercel.app/auth/callback`
       }
     });
 
