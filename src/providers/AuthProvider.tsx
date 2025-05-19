@@ -12,7 +12,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const publicRoutes = ['/signin', '/signup'];
+const publicRoutes = ['/signin', '/signup', '/auth/callback'];
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<any>(null);
@@ -23,10 +23,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN') {
         setUser(session?.user ?? null);
+        // Only redirect to welcome if on a public route
+        if (publicRoutes.includes(pathname)) {
         router.push('/welcome');
+        }
       } else if (event === 'SIGNED_OUT') {
         setUser(null);
+        // Only redirect to signin if not on a public route
+        if (!publicRoutes.includes(pathname)) {
         router.push('/signin');
+        }
       }
     });
 
@@ -34,7 +40,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       
-      // Redirect logic
+      // Only redirect if:
+      // 1. No session and not on a public route -> redirect to signin
+      // 2. Has session and on a public route -> redirect to welcome
       if (!session && !publicRoutes.includes(pathname)) {
         router.push('/signin');
       } else if (session && publicRoutes.includes(pathname)) {
@@ -51,7 +59,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/welcome`
+        redirectTo: `${window.location.origin}${pathname}`
       }
     });
 
