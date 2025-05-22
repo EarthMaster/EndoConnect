@@ -361,7 +361,7 @@ export default function SupportGroup() {
                                   <div className="flex items-center space-x-4">
                                     <div className="flex items-center space-x-2">
                                       <Clock className="w-4 h-4 text-purple-500" />
-                                      <span className="text-sm text-gray-600">{session.time}</span>
+                                    <span className="text-sm text-gray-600">{session.time}</span>
                                     </div>
                                     <div className="flex items-center space-x-2">
                                       <Users className="w-4 h-4 text-purple-500" />
@@ -405,8 +405,8 @@ export default function SupportGroup() {
                         <div className="text-center py-8">
                           <CalendarIcon className="w-12 h-12 text-gray-300 mx-auto mb-4" />
                           <p className="text-gray-500">
-                            Nenhuma sessão agendada para esta data.
-                          </p>
+                          Nenhuma sessão agendada para esta data.
+                        </p>
                         </div>
                       )}
                     </div>
