@@ -2,12 +2,12 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 interface UserState {
-  profile: string | null;
+  profile: string | null; // This stores the risk level (LOW, MODERATE, HIGH)
   completedModules: string[];
-  screeningAnswers: Record<string, string>;
+  screeningAnswers: Record<string, any>;
   setProfile: (profile: string | null) => void;
   addCompletedModule: (moduleId: string) => void;
-  setScreeningAnswers: (answers: Record<string, string>) => void;
+  setScreeningAnswers: (answers: Record<string, any>) => void;
   reset: () => void;
 }
 
@@ -34,4 +34,4 @@ export const useUserStore = create<UserState>()(
       name: 'user-storage',
     }
   )
-); 
+);
