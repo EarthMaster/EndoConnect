@@ -6,13 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/providers/AuthProvider';
-import { useRouter } from 'next/navigation';
 import { Badge } from "@/components/ui/badge";
 import { Avatar } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar } from "@/components/ui/calendar";
 import { motion, AnimatePresence } from "framer-motion";
-import { AlertCircle, Calendar as CalendarIcon, Clock, Users, Video, AlertTriangle, Loader2, Heart, Shield, MessageCircle } from 'lucide-react';
+import { AlertCircle, Calendar as CalendarIcon, Clock, Users, Video, Loader2, Heart, Shield, MessageCircle } from 'lucide-react';
+import { PageLayout } from '@/components/ui/page-layout';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -40,7 +40,6 @@ interface UserProfile {
 
 export default function SupportGroup() {
   const { user } = useAuth();
-  const router = useRouter();
   const [sessions, setSessions] = useState<GroupSession[]>([]);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [showRulesModal, setShowRulesModal] = useState(false);
@@ -126,8 +125,8 @@ export default function SupportGroup() {
 
       if (error) throw error;
 
-      setSessions(prev => prev.map(session => 
-        session.id === sessionId 
+      setSessions(prev => prev.map(session =>
+        session.id === sessionId
           ? { ...session, current_participants: session.current_participants + 1 }
           : session
       ));
@@ -172,30 +171,17 @@ export default function SupportGroup() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-purple-50 via-white to-purple-50">
-      <div className="container mx-auto px-4 py-8 md:py-16">
+    <PageLayout
+      title="Círculo Endo"
+      subtitle="Um espaço seguro para conversas sobre dor, saúde e coragem. Compartilhe experiências, receba apoio e construa conexões significativas."
+      gradient="from-purple-600 to-pink-600"
+    >
+      <div className="space-y-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="max-w-6xl mx-auto space-y-8"
+          transition={{ delay: 0.2, duration: 0.5 }}
         >
-          {/* Header */}
-          <div className="text-center space-y-6">
-            <motion.h1
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              transition={{ type: "spring", stiffness: 200, damping: 15 }}
-              className="text-4xl md:text-5xl font-bold text-purple-900"
-            >
-              Círculo Endo
-            </motion.h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-              Um espaço seguro para conversas sobre dor, saúde e coragem.
-              Compartilhe experiências, receba apoio e construa conexões significativas.
-            </p>
-          </div>
-
           <Tabs defaultValue="sessions" className="w-full">
             <TabsList className="grid w-full grid-cols-3 mb-8">
               <TabsTrigger value="sessions" className="text-base">
@@ -277,7 +263,7 @@ export default function SupportGroup() {
                               </Badge>
                             ))}
                           </div>
-                          
+
                           <Button
                             onClick={() => joinSession(session.id)}
                             disabled={session.current_participants >= session.max_participants || !userProfile}
@@ -345,7 +331,7 @@ export default function SupportGroup() {
                     </h3>
                     <div className="space-y-4">
                       {sessions
-                        .filter(session => format(new Date(session.date), 'yyyy-MM-dd') === 
+                        .filter(session => format(new Date(session.date), 'yyyy-MM-dd') ===
                                 format(selectedDate || new Date(), 'yyyy-MM-dd'))
                         .map(session => (
                           <motion.div
@@ -400,7 +386,7 @@ export default function SupportGroup() {
                           </motion.div>
                         ))}
                       {sessions
-                        .filter(session => format(new Date(session.date), 'yyyy-MM-dd') === 
+                        .filter(session => format(new Date(session.date), 'yyyy-MM-dd') ===
                                 format(selectedDate || new Date(), 'yyyy-MM-dd')).length === 0 && (
                         <div className="text-center py-8">
                           <CalendarIcon className="w-12 h-12 text-gray-300 mx-auto mb-4" />
@@ -440,7 +426,7 @@ export default function SupportGroup() {
                           </div>
                         </Card>
                       </motion.div>
-                      
+
                       <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -696,6 +682,6 @@ export default function SupportGroup() {
           </motion.div>
         </motion.div>
       </div>
-    </main>
+    </PageLayout>
   );
-} 
+}
