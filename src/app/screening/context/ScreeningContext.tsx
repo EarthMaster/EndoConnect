@@ -60,7 +60,7 @@ export function ScreeningProvider({ children }: { children: ReactNode }) {
   const setAnswer = (questionId: string, value: any) => {
     setAnswers(prev => {
       const newAnswers = { ...prev };
-      
+
       switch (questionId) {
         case 'pain_assessment':
           newAnswers.painAssessment.frequency = value;
@@ -74,7 +74,7 @@ export function ScreeningProvider({ children }: { children: ReactNode }) {
         case 'menstrual_symptoms':
           // Handle multiple selections for menstrual symptoms
           if (value === 'dysmenorrhea') newAnswers.menstrualSymptoms.dysmenorrhea = true;
-          if (value === 'irregular') newAnswers.menstrualSymptoms.cycleRegularity = 'irregular';
+          if (value === 'irregular') newAnswers.menstrualSymptoms.cycleRegularity = 'highly_irregular';
           if (value === 'heavy') newAnswers.menstrualSymptoms.bleedingIntensity = 'heavy';
           if (value === 'long') newAnswers.menstrualSymptoms.duration = 7;
           break;
@@ -103,7 +103,7 @@ export function ScreeningProvider({ children }: { children: ReactNode }) {
           newAnswers.emotionalSymptoms.impactOnLife = value;
           break;
       }
-      
+
       return newAnswers;
     });
   };
@@ -143,4 +143,4 @@ export function useScreening() {
     throw new Error('useScreening must be used within a ScreeningProvider');
   }
   return context;
-} 
+}

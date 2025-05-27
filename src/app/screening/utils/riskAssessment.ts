@@ -1,7 +1,7 @@
-import { 
-  ScreeningAnswers, 
-  RiskAssessment, 
-  RiskLevel 
+import {
+  ScreeningAnswers,
+  RiskAssessment,
+  RiskLevel
 } from '../types';
 
 export function calculateRiskAssessment(answers: ScreeningAnswers): RiskAssessment {
@@ -84,8 +84,10 @@ function calculateMenstrualScore(symptoms: ScreeningAnswers['menstrualSymptoms']
   }
 
   // Cycle regularity (0-20)
-  if (symptoms.cycleRegularity === 'irregular') {
+  if (symptoms.cycleRegularity === 'highly_irregular') {
     score += 20;
+  } else if (symptoms.cycleRegularity === 'slightly_irregular') {
+    score += 10;
   }
 
   // Bleeding intensity (0-25)
@@ -240,4 +242,4 @@ function generateRecommendations(
       type: riskLevel === 'HIGH' ? 'Especialista' : 'Ginecologista'
     }
   };
-} 
+}

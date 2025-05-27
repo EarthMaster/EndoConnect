@@ -293,7 +293,7 @@ export default function Screening() {
             <div className="absolute top-0 left-0 w-full h-3 pointer-events-none">
               <div
                 className="h-full bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg transition-all duration-300"
-                style={{ width: `${((currentValue - currentQuestion.min) / (currentQuestion.max - currentQuestion.min)) * 100}%` }}
+                style={{ width: `${((currentValue - (currentQuestion.min || 0)) / ((currentQuestion.max || 10) - (currentQuestion.min || 0))) * 100}%` }}
               />
             </div>
           </div>
