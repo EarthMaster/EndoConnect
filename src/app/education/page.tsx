@@ -11,6 +11,7 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/providers/AuthProvider';
 import { useUserStore } from '@/store/userStore';
 import { PageLayout } from '@/components/ui/page-layout';
+import { Section } from '@/components/ui/section';
 
 interface EducationModule {
   id: string;
@@ -256,162 +257,174 @@ export default function Education() {
 
   if (isLoading) {
     return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.7 }}
-        className="flex flex-col items-center justify-center min-h-[50vh] space-y-6"
+      <PageLayout
+        title="Carregando Módulos"
+        subtitle="Preparando seu conteúdo educativo personalizado"
+        gradient="from-purple-600 to-blue-600"
+        containerPadding="sm"
       >
-        <div className="relative">
-          <div className="absolute inset-0 bg-purple-300/20 rounded-full blur-xl animate-pulse"></div>
-          <Loader2 className="h-12 w-12 animate-spin text-purple-600 relative z-10" />
-        </div>
-        <motion.p
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
-          className="text-gray-600 font-medium"
-        >
-          Carregando seus módulos educativos...
-        </motion.p>
-      </motion.div>
+        <Section spacing="md" background="white">
+          <div className="flex flex-col items-center justify-center py-12 space-y-6">
+            <div className="relative">
+              <div className="absolute inset-0 bg-purple-300/20 rounded-full blur-xl animate-pulse"></div>
+              <Loader2 className="h-12 w-12 animate-spin text-purple-600 relative z-10" />
+            </div>
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.5 }}
+              className="text-gray-600 font-medium"
+            >
+              Carregando seus módulos educativos...
+            </motion.p>
+          </div>
+        </Section>
+      </PageLayout>
     );
   }
 
   if (error) {
     return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.7 }}
-        className="min-h-[60vh] flex items-center justify-center px-4"
+      <PageLayout
+        title="Conteúdo Indisponível"
+        subtitle="Vamos resolver isso rapidamente"
+        gradient="from-red-600 to-purple-600"
+        containerPadding="sm"
       >
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.2 }}
-          className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-red-100 p-8 max-w-md w-full"
-        >
-          <div className="flex flex-col items-center space-y-6 text-center">
-            <div className="relative">
-              <div className="absolute inset-0 bg-red-100 rounded-full blur-xl"></div>
-              <div className="bg-red-50 p-3 rounded-full relative z-10">
-                <AlertCircle className="h-10 w-10 text-red-500" />
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <motion.h2
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.4 }}
-                className="text-2xl font-semibold text-purple-900"
-              >
-                Conteúdo Indisponível
-              </motion.h2>
-
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-                className="text-gray-600 text-center"
-              >
-                {error}
-              </motion.p>
-            </div>
-
+        <Section spacing="md" background="white">
+          <div className="py-12 flex items-center justify-center">
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-              className="flex flex-col sm:flex-row gap-3 w-full pt-4"
+              transition={{ duration: 0.7, delay: 0.2 }}
+              className="max-w-md w-full"
             >
-              <Button
-                onClick={() => router.push('/screening')}
-                variant="outline"
-                className="w-full border-purple-200 hover:bg-purple-50 transition-colors"
-              >
-                Refazer Triagem
-              </Button>
-              <Button
-                onClick={() => router.push('/support-group')}
-                className="w-full bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 transition-colors"
-              >
-                Ir para Grupos de Apoio
-              </Button>
+              <div className="flex flex-col items-center space-y-6 text-center">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-red-100 rounded-full blur-xl"></div>
+                  <div className="bg-red-50 p-3 rounded-full relative z-10">
+                    <AlertCircle className="h-10 w-10 text-red-500" />
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <motion.h2
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                    className="text-xl font-semibold text-red-800"
+                  >
+                    Ops! Algo deu errado
+                  </motion.h2>
+
+                  <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.5 }}
+                    className="text-gray-600 text-center text-sm"
+                  >
+                    {error}
+                  </motion.p>
+                </div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 }}
+                  className="flex flex-col sm:flex-row gap-3 w-full pt-4"
+                >
+                  <Button
+                    onClick={() => router.push('/screening')}
+                    variant="outline"
+                    className="w-full border-purple-200 hover:bg-purple-50 transition-colors text-sm"
+                  >
+                    Refazer Triagem
+                  </Button>
+                  <Button
+                    onClick={() => router.push('/support-group')}
+                    className="w-full bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 transition-colors text-sm"
+                  >
+                    Ir para Grupos de Apoio
+                  </Button>
+                </motion.div>
+              </div>
             </motion.div>
           </div>
-        </motion.div>
-      </motion.div>
+        </Section>
+      </PageLayout>
     );
   }
 
   if (!modules.length) {
     return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.7 }}
-        className="min-h-[60vh] flex items-center justify-center px-4"
+      <PageLayout
+        title="Nenhum Módulo Disponível"
+        subtitle="Vamos configurar seu conteúdo"
+        gradient="from-yellow-600 to-purple-600"
+        containerPadding="sm"
       >
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.2 }}
-          className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-yellow-100 p-8 max-w-md w-full"
-        >
-          <div className="flex flex-col items-center space-y-6 text-center">
-            <div className="relative">
-              <div className="absolute inset-0 bg-yellow-100 rounded-full blur-xl"></div>
-              <div className="bg-yellow-50 p-3 rounded-full relative z-10">
-                <AlertCircle className="h-10 w-10 text-yellow-500" />
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <motion.h2
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.4 }}
-                className="text-2xl font-semibold text-purple-900"
-              >
-                Nenhum módulo disponível
-              </motion.h2>
-
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-                className="text-gray-600 text-center"
-              >
-                Não encontramos módulos educativos para o seu perfil. Por favor, entre em contato com o suporte
-                ou tente refazer a triagem.
-              </motion.p>
-            </div>
-
+        <Section spacing="md" background="white">
+          <div className="py-12 flex items-center justify-center">
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-              className="flex flex-col sm:flex-row gap-3 w-full pt-4"
+              transition={{ duration: 0.7, delay: 0.2 }}
+              className="max-w-md w-full"
             >
-              <Button
-                onClick={() => router.push('/screening')}
-                variant="outline"
-                className="w-full border-purple-200 hover:bg-purple-50 transition-colors"
-              >
-                Refazer Triagem
-              </Button>
-              <Button
-                onClick={() => router.push('/support-group')}
-                className="w-full bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 transition-colors"
-              >
-                Ir para Grupos de Apoio
-              </Button>
+              <div className="flex flex-col items-center space-y-6 text-center">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-yellow-100 rounded-full blur-xl"></div>
+                  <div className="bg-yellow-50 p-3 rounded-full relative z-10">
+                    <AlertCircle className="h-10 w-10 text-yellow-500" />
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <motion.h2
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                    className="text-xl font-semibold text-yellow-800"
+                  >
+                    Nenhum módulo disponível
+                  </motion.h2>
+
+                  <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.5 }}
+                    className="text-gray-600 text-center text-sm"
+                  >
+                    Não encontramos módulos educativos para o seu perfil. Por favor, entre em contato com o suporte
+                    ou tente refazer a triagem.
+                  </motion.p>
+                </div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 }}
+                  className="flex flex-col sm:flex-row gap-3 w-full pt-4"
+                >
+                  <Button
+                    onClick={() => router.push('/screening')}
+                    variant="outline"
+                    className="w-full border-purple-200 hover:bg-purple-50 transition-colors text-sm"
+                  >
+                    Refazer Triagem
+                  </Button>
+                  <Button
+                    onClick={() => router.push('/support-group')}
+                    className="w-full bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 transition-colors text-sm"
+                  >
+                    Ir para Grupos de Apoio
+                  </Button>
+                </motion.div>
+              </div>
             </motion.div>
           </div>
-        </motion.div>
-      </motion.div>
+        </Section>
+      </PageLayout>
     );
   }
 
@@ -421,381 +434,189 @@ export default function Education() {
   // Show completion selection page if all modules are already completed (and not showing celebration)
   if (allModulesCompleted && !showCompletion) {
     return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-100 via-white to-blue-100"
+      <PageLayout
+        title="Educação Concluída!"
+        subtitle="Você já completou todos os módulos educativos"
+        gradient="from-green-600 to-purple-600"
+        containerPadding="sm"
       >
-        <motion.div
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="max-w-4xl mx-auto p-8"
-        >
-          <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl border border-purple-100 overflow-hidden">
-            {/* Header */}
-            <div className="bg-gradient-to-r from-purple-600 to-blue-600 p-8 text-center text-white">
-              <motion.div
-                initial={{ y: -20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.2, duration: 0.6 }}
-              >
-                <div className="text-6xl mb-4">🎓</div>
-                <h1 className="text-3xl md:text-4xl font-bold mb-2">
-                  Educação Concluída!
-                </h1>
-                <p className="text-xl opacity-90">
-                  Você já completou todos os módulos educativos
-                </p>
-              </motion.div>
+        <Section spacing="md" background="gradient">
+          <div className="p-8 text-center space-y-8">
+            <div className="text-6xl mb-4">🎓</div>
+            <div className="space-y-4">
+              <h2 className="text-2xl font-semibold text-purple-800">
+                Qual é o seu próximo passo?
+              </h2>
+              <p className="text-purple-700 max-w-2xl mx-auto leading-relaxed">
+                Agora que você completou sua jornada educativa, escolha como gostaria de continuar
+                sua experiência no EndoConnect.
+              </p>
             </div>
 
-            {/* Content */}
-            <div className="p-8 md:p-12">
+            {/* Main Options */}
+            <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+              {/* Support Group Option */}
               <motion.div
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.4, duration: 0.6 }}
-                className="text-center space-y-8"
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.6, duration: 0.6 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="group"
               >
-                <div className="space-y-4">
-                  <h2 className="text-2xl font-semibold text-gray-800">
-                    Qual é o seu próximo passo?
-                  </h2>
-                  <p className="text-gray-600 max-w-2xl mx-auto leading-relaxed">
-                    Agora que você completou sua jornada educativa, escolha como gostaria de continuar
-                    sua experiência no EndoConnect.
-                  </p>
-                </div>
-
-                {/* Main Options */}
-                <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-                  {/* Support Group Option */}
-                  <motion.div
-                    initial={{ x: -20, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: 0.6, duration: 0.6 }}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="group"
-                  >
-                    <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-8 rounded-2xl border border-green-200 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer h-full"
-                         onClick={() => router.push('/support-group')}>
-                      <div className="text-center space-y-4">
-                        <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto group-hover:scale-110 transition-transform">
-                          <Users className="w-8 h-8 text-green-600" />
-                        </div>
-                        <h3 className="text-xl font-bold text-green-800">
-                          Círculo Endo
-                        </h3>
-                        <p className="text-green-700 leading-relaxed">
-                          Conecte-se com outras mulheres que compartilham experiências similares.
-                          Participe de conversas seguras e receba suporte contínuo.
-                        </p>
-                        <div className="space-y-2 text-sm text-green-600">
-                          <div className="flex items-center justify-center gap-2">
-                            <span>💬</span>
-                            <span>Conversas em grupo</span>
-                          </div>
-                          <div className="flex items-center justify-center gap-2">
-                            <span>🩺</span>
-                            <span>Suporte profissional</span>
-                          </div>
-                          <div className="flex items-center justify-center gap-2">
-                            <span>🤝</span>
-                            <span>Comunidade acolhedora</span>
-                          </div>
-                        </div>
-                        <Button className="w-full bg-green-600 hover:bg-green-700 text-white">
-                          Entrar no Grupo de Apoio
-                        </Button>
-                      </div>
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-xl border border-green-200 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer h-full"
+                     onClick={() => router.push('/support-group')}>
+                  <div className="text-center space-y-4">
+                    <div className="bg-green-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto group-hover:scale-110 transition-transform">
+                      <Users className="w-6 h-6 text-green-600" />
                     </div>
-                  </motion.div>
-
-                  {/* Feedback Option */}
-                  <motion.div
-                    initial={{ x: 20, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: 0.8, duration: 0.6 }}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="group"
-                  >
-                    <div className="bg-gradient-to-br from-purple-50 to-blue-50 p-8 rounded-2xl border border-purple-200 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer h-full"
-                         onClick={() => router.push('/feedback')}>
-                      <div className="text-center space-y-4">
-                        <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto group-hover:scale-110 transition-transform">
-                          <BookOpen className="w-8 h-8 text-purple-600" />
-                        </div>
-                        <h3 className="text-xl font-bold text-purple-800">
-                          Compartilhar Feedback
-                        </h3>
-                        <p className="text-purple-700 leading-relaxed">
-                          Ajude-nos a melhorar o EndoConnect compartilhando sua experiência
-                          com os módulos educativos.
-                        </p>
-                        <div className="space-y-2 text-sm text-purple-600">
-                          <div className="flex items-center justify-center gap-2">
-                            <span>⭐</span>
-                            <span>Avalie sua experiência</span>
-                          </div>
-                          <div className="flex items-center justify-center gap-2">
-                            <span>💡</span>
-                            <span>Sugira melhorias</span>
-                          </div>
-                          <div className="flex items-center justify-center gap-2">
-                            <span>🎯</span>
-                            <span>Ajude outras mulheres</span>
-                          </div>
-                        </div>
-                        <Button variant="outline" className="w-full border-purple-300 text-purple-700 hover:bg-purple-50">
-                          Dar Feedback
-                        </Button>
-                      </div>
-                    </div>
-                  </motion.div>
-                </div>
-
-                {/* Additional Options */}
-                <motion.div
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 1.0, duration: 0.6 }}
-                  className="pt-8 border-t border-gray-200"
-                >
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <Button
-                      onClick={() => setCurrentModule(0)}
-                      variant="ghost"
-                      className="text-gray-600 hover:text-gray-800 hover:bg-gray-100"
-                    >
-                      <BookOpen className="w-4 h-4 mr-2" />
-                      Revisar Módulos
-                    </Button>
-
-                    <Button
-                      onClick={() => router.push('/')}
-                      variant="ghost"
-                      className="text-gray-600 hover:text-gray-800 hover:bg-gray-100"
-                    >
-                      <Home className="w-4 h-4 mr-2" />
-                      Voltar ao Início
+                    <h3 className="text-lg font-bold text-green-800">
+                      Círculo Endo
+                    </h3>
+                    <p className="text-green-700 leading-relaxed text-sm">
+                      Conecte-se com outras mulheres que compartilham experiências similares.
+                      Participe de conversas seguras e receba suporte contínuo.
+                    </p>
+                    <Button className="w-full bg-green-600 hover:bg-green-700 text-white text-sm">
+                      Entrar no Grupo de Apoio
                     </Button>
                   </div>
-                </motion.div>
+                </div>
+              </motion.div>
+
+              {/* Feedback Option */}
+              <motion.div
+                initial={{ x: 20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.8, duration: 0.6 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="group"
+              >
+                <div className="bg-gradient-to-br from-purple-50 to-blue-50 p-6 rounded-xl border border-purple-200 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer h-full"
+                     onClick={() => router.push('/feedback')}>
+                  <div className="text-center space-y-4">
+                    <div className="bg-purple-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto group-hover:scale-110 transition-transform">
+                      <BookOpen className="w-6 h-6 text-purple-600" />
+                    </div>
+                    <h3 className="text-lg font-bold text-purple-800">
+                      Compartilhar Feedback
+                    </h3>
+                    <p className="text-purple-700 leading-relaxed text-sm">
+                      Ajude-nos a melhorar o EndoConnect compartilhando sua experiência
+                      com os módulos educativos.
+                    </p>
+                    <Button variant="outline" className="w-full border-purple-300 text-purple-700 hover:bg-purple-50 text-sm">
+                      Dar Feedback
+                    </Button>
+                  </div>
+                </div>
               </motion.div>
             </div>
+
+            {/* Additional Options */}
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 1.0, duration: 0.6 }}
+              className="pt-6 border-t border-purple-200"
+            >
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button
+                  onClick={() => setCurrentModule(0)}
+                  variant="ghost"
+                  className="text-gray-600 hover:text-gray-800 hover:bg-gray-100 text-sm"
+                >
+                  <BookOpen className="w-4 h-4 mr-2" />
+                  Revisar Módulos
+                </Button>
+
+                <Button
+                  onClick={() => router.push('/')}
+                  variant="ghost"
+                  className="text-gray-600 hover:text-gray-800 hover:bg-gray-100 text-sm"
+                >
+                  <Home className="w-4 h-4 mr-2" />
+                  Voltar ao Início
+                </Button>
+              </div>
+            </motion.div>
           </div>
-        </motion.div>
-      </motion.div>
+        </Section>
+      </PageLayout>
     );
   }
 
   // Show completion celebration
   if (showCompletion) {
     return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-100 via-white to-purple-100"
+      <PageLayout
+        title="🎉 Parabéns!"
+        subtitle="Você completou todos os módulos educativos"
+        gradient="from-green-600 to-emerald-600"
+        containerPadding="sm"
       >
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="text-center space-y-8 p-8"
-        >
-          <motion.div
-            animate={{
-              scale: [1, 1.1, 1],
-              rotate: [0, 5, -5, 0]
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-            className="text-8xl"
-          >
-            🎉
-          </motion.div>
-
-          <div className="space-y-4">
-            <motion.h1
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.3, duration: 0.6 }}
-              className="text-4xl md:text-5xl font-bold text-purple-900"
-            >
-              Parabéns!
-            </motion.h1>
-
-            <motion.p
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.5, duration: 0.6 }}
-              className="text-xl text-gray-600 max-w-md mx-auto"
-            >
-              Você completou todos os módulos educativos!
-              Agora você está mais preparada para lidar com a endometriose.
-            </motion.p>
-          </div>
-
-          <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.7, duration: 0.6 }}
-            className="space-y-6"
-          >
-            {/* Next Steps Options */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-purple-100">
-              <h3 className="text-lg font-semibold text-purple-800 mb-4 text-center">
-                O que você gostaria de fazer agora?
-              </h3>
-
-              <div className="grid gap-4 md:grid-cols-2">
-                {/* Support Group Option */}
-                <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <Button
-                    onClick={() => router.push('/support-group')}
-                    className="w-full h-auto p-4 bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-700 hover:to-emerald-600 text-white shadow-lg"
-                  >
-                    <div className="text-center space-y-2">
-                      <Users className="w-6 h-6 mx-auto" />
-                      <div className="font-semibold">Círculo Endo</div>
-                      <div className="text-sm opacity-90">Conecte-se com outras mulheres</div>
-                    </div>
-                  </Button>
-                </motion.div>
-
-                {/* Feedback Option */}
-                <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <Button
-                    onClick={() => router.push('/feedback')}
-                    variant="outline"
-                    className="w-full h-auto p-4 border-purple-200 hover:bg-purple-50"
-                  >
-                    <div className="text-center space-y-2">
-                      <BookOpen className="w-6 h-6 mx-auto text-purple-600" />
-                      <div className="font-semibold text-purple-800">Dar Feedback</div>
-                      <div className="text-sm text-purple-600">Compartilhe sua experiência</div>
-                    </div>
-                  </Button>
-                </motion.div>
-              </div>
-            </div>
-
-            {/* Additional Options */}
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Button
-                onClick={() => setShowCompletion(false)}
-                variant="ghost"
-                className="text-purple-600 hover:text-purple-800 hover:bg-purple-50"
-              >
-                Revisar Módulos
-              </Button>
-
-              <Button
-                onClick={() => router.push('/')}
-                variant="ghost"
-                className="text-purple-600 hover:text-purple-800 hover:bg-purple-50"
-              >
-                Voltar ao Início
-              </Button>
-            </div>
-          </motion.div>
-        </motion.div>
-      </motion.div>
-    );
-  }
-
-  // Safety check to ensure we have valid modules and current module index
-  if (!modules[currentModule]) {
-    return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.7 }}
-        className="min-h-[60vh] flex items-center justify-center px-4"
-      >
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.2 }}
-          className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-yellow-100 p-8 max-w-md w-full"
-        >
-          <div className="flex flex-col items-center space-y-6 text-center">
-            <div className="relative">
-              <div className="absolute inset-0 bg-yellow-100 rounded-full blur-xl"></div>
-              <div className="bg-yellow-50 p-3 rounded-full relative z-10">
-                <AlertCircle className="h-10 w-10 text-yellow-500" />
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <h2 className="text-2xl font-semibold text-purple-900">
-                Módulo não encontrado
-              </h2>
-
-              <p className="text-gray-600 text-center">
-                Não foi possível carregar o módulo atual. Por favor, tente novamente.
-              </p>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-3 w-full pt-4">
-              <Button
-                onClick={() => setCurrentModule(0)}
-                variant="outline"
-                className="w-full border-purple-200 hover:bg-purple-50 transition-colors"
-              >
-                Voltar ao Início
-              </Button>
-              <Button
-                onClick={() => router.push('/screening')}
-                className="w-full bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 transition-colors"
-              >
-                Refazer Triagem
-              </Button>
-            </div>
-          </div>
-        </motion.div>
-      </motion.div>
-    );
-  }
-
-  return (
-    <PageLayout
-      title={`Módulo ${currentModule + 1} de ${modules.length}`}
-      subtitle={modules[currentModule]?.title || 'Carregando módulo...'}
-      gradient="from-purple-600 to-blue-600"
-    >
-      <div className="space-y-8">
-        {/* Enhanced Header with Module Overview */}
-        <div className="bg-gradient-to-r from-white/90 to-purple-50/80 backdrop-blur-sm rounded-xl shadow-lg border border-purple-100/50 p-6 md:p-8">
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-6">
+        <Section spacing="md" background="gradient">
+          <div className="p-8 text-center space-y-8">
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3, duration: 0.5 }}
-              className="space-y-2"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+              className="text-8xl"
             >
-              <h1 className="text-2xl md:text-3xl font-bold text-purple-900">
-                Módulo {currentModule + 1} de {modules.length}
-              </h1>
-              <p className="text-purple-700 font-medium">
-                {modules[currentModule]?.title}
+              🎓
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.6 }}
+              className="space-y-4"
+            >
+              <h2 className="text-3xl font-bold text-green-800">
+                Jornada Educativa Concluída!
+              </h2>
+              <p className="text-green-700 text-lg max-w-2xl mx-auto">
+                Você demonstrou dedicação em aprender sobre a endometriose. Agora está preparada para
+                conectar-se com outras mulheres e compartilhar suas experiências.
               </p>
             </motion.div>
 
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.8, duration: 0.5 }}
+              className="pt-4"
+            >
+              <Button
+                onClick={() => router.push('/support-group')}
+                size="lg"
+                className="px-8 py-4 font-semibold bg-gradient-to-r from-green-600 via-green-500 to-emerald-500 hover:from-green-700 hover:via-green-600 hover:to-emerald-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+              >
+                <Users className="mr-3 h-5 w-5" />
+                Ir para Grupo de Apoio
+                <ArrowRight className="ml-3 h-5 w-5" />
+              </Button>
+            </motion.div>
+          </div>
+        </Section>
+      </PageLayout>
+    );
+  }
+
+  // Main education interface
+  return (
+    <PageLayout
+      title={`Módulo ${currentModule + 1}: ${modules[currentModule]?.title || 'Carregando...'}`}
+      subtitle={`Progresso: ${Math.round(progress)}% completo`}
+      gradient="from-purple-600 to-blue-600"
+      containerPadding="sm"
+    >
+      <div className="space-y-6">
+        {/* Progress Section */}
+        <Section spacing="sm" background="white">
+          <div className="p-4 space-y-4">
+            {/* Progress info */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -803,7 +624,7 @@ export default function Education() {
               className="flex flex-col sm:flex-row items-start sm:items-center gap-4"
             >
               {/* Progress Badge */}
-              <div className="bg-gradient-to-r from-purple-100 to-purple-50 px-4 py-2 rounded-full border border-purple-200">
+              <div className="bg-gradient-to-r from-purple-100 to-purple-50 px-3 py-2 rounded-full border border-purple-200">
                 <span className="text-sm font-semibold text-purple-800">
                   {Math.round(progress)}% concluído
                 </span>
@@ -813,73 +634,66 @@ export default function Education() {
               <div className="flex items-center space-x-2">
                 <div className="bg-purple-100 px-3 py-1 rounded-full">
                   <span className="text-sm font-medium text-purple-700">
-                    Total: {formatTime((totalTimeSpent[currentModule] || 0) + (currentTime - moduleStartTime))}
+                    Tempo: {formatTime((totalTimeSpent[currentModule] || 0) + (currentTime - moduleStartTime))}
                   </span>
                 </div>
               </div>
             </motion.div>
-          </div>
 
-          {/* Enhanced Progress Bar */}
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">Progresso geral</span>
-              <span className="text-sm font-medium text-purple-700">
-                {modules.filter(m => m.completed).length} de {modules.length} módulos
-              </span>
-            </div>
-            <Progress
-              value={progress}
-              className="h-3 bg-purple-100 rounded-full overflow-hidden"
-            />
-
-            {/* Module Dots - Simplified */}
-            <div className="flex justify-center space-x-2 pt-2">
-              {modules.map((module, index) => (
-                <motion.button
-                  key={index}
-                  onClick={() => handleModuleSelect(index)}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                  className={`relative group w-3 h-3 rounded-full transition-all duration-300 ${
-                    module.completed
-                      ? 'bg-green-500 hover:bg-green-600'
-                      : index === currentModule
-                        ? 'bg-purple-500 hover:bg-purple-600 ring-2 ring-purple-300'
-                        : 'bg-gray-300 hover:bg-gray-400'
-                  }`}
-                  title={`Módulo ${index + 1}: ${module.title}`}
-                >
-                  {module.completed && (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <CheckCircle2 className="w-2 h-2 text-white" />
-                    </div>
-                  )}
-                </motion.button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <motion.div
-          key={currentModule}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="relative"
-        >
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-100/30 to-blue-100/20 rounded-2xl blur-2xl -z-10"></div>
-          <Card className="border-purple-100/70 shadow-xl rounded-2xl overflow-hidden bg-white/95 backdrop-blur-sm">
-            {/* Enhanced Header */}
-            <div className="bg-gradient-to-r from-purple-50 to-blue-50 p-6 md:p-8 border-b border-purple-100/50">
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: '100%' }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-                className="absolute h-1 bg-gradient-to-r from-purple-500 to-blue-500 top-0 left-0"
+            {/* Enhanced Progress Bar */}
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-600">Progresso geral</span>
+                <span className="text-sm font-medium text-purple-700">
+                  {modules.filter(m => m.completed).length} de {modules.length} módulos
+                </span>
+              </div>
+              <Progress
+                value={progress}
+                className="h-2 bg-purple-100 rounded-full overflow-hidden"
               />
 
+              {/* Module Dots - Simplified */}
+              <div className="flex justify-center space-x-2 pt-2">
+                {modules.map((module, index) => (
+                  <motion.button
+                    key={index}
+                    onClick={() => handleModuleSelect(index)}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                    className={`relative group w-3 h-3 rounded-full transition-all duration-300 ${
+                      module.completed
+                        ? 'bg-green-500 hover:bg-green-600'
+                        : index === currentModule
+                          ? 'bg-purple-500 hover:bg-purple-600 ring-2 ring-purple-300'
+                          : 'bg-gray-300 hover:bg-gray-400'
+                    }`}
+                    title={`Módulo ${index + 1}: ${module.title}`}
+                  >
+                    {module.completed && (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <CheckCircle2 className="w-2 h-2 text-white" />
+                      </div>
+                    )}
+                  </motion.button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </Section>
+
+        {/* Module Content */}
+        <Section spacing="sm" background="glass">
+          <motion.div
+            key={currentModule}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="p-6"
+          >
+            {/* Module Header */}
+            <div className="mb-6">
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -887,13 +701,13 @@ export default function Education() {
                 className="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
               >
                 <div className="space-y-2">
-                  <h2 className="text-2xl md:text-3xl font-bold text-purple-900">
+                  <h2 className="text-2xl font-bold text-purple-900">
                     {modules[currentModule]?.title || 'Carregando...'}
                   </h2>
                   <div className="flex items-center space-x-4 text-sm text-gray-600">
                     <div className="flex items-center space-x-1">
                       <Clock className="w-4 h-4" />
-                      <span>Tempo atual: {formatTime(currentTime - moduleStartTime)}</span>
+                      <span>Tempo: {formatTime(currentTime - moduleStartTime)}</span>
                     </div>
                     <div className="flex items-center space-x-1">
                       <Eye className="w-4 h-4" />
@@ -908,181 +722,158 @@ export default function Education() {
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ delay: 0.4, type: "spring", stiffness: 200 }}
-                      className="flex items-center space-x-2 bg-green-100 px-4 py-2 rounded-full border border-green-200"
+                      className="flex items-center space-x-2 bg-green-100 px-3 py-2 rounded-full border border-green-200"
                     >
-                      <CheckCircle2 className="h-5 w-5 text-green-600" />
+                      <CheckCircle2 className="h-4 w-4 text-green-600" />
                       <span className="text-sm font-semibold text-green-700">Concluído</span>
                     </motion.div>
                   )}
-
-
                 </div>
               </motion.div>
             </div>
-
-
 
             {/* Main Content */}
-            <div className="p-6 md:p-8">
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.4, duration: 0.6 }}
-                className="prose prose-purple max-w-none prose-headings:text-purple-800 prose-p:text-gray-700 prose-li:text-gray-700 prose-strong:text-purple-700 prose-a:text-purple-600 hover:prose-a:text-purple-800"
-              >
-                <div dangerouslySetInnerHTML={{ __html: modules[currentModule]?.content || '' }} />
-              </motion.div>
-
-              {/* Enhanced Module Info Cards */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.6, duration: 0.5 }}
-                className="mt-8 grid grid-cols-1 md:grid-cols-4 gap-4 border-t border-purple-100/50 pt-6"
-              >
-                <div className="flex items-center space-x-3 bg-gradient-to-r from-purple-50 to-purple-100/50 p-4 rounded-xl border border-purple-100">
-                  <Clock className="h-6 w-6 text-purple-500" />
-                  <div>
-                    <p className="text-sm font-semibold text-purple-800">Duração</p>
-                    <p className="text-sm text-gray-600">{modules[currentModule]?.duration || 0} min</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-3 bg-gradient-to-r from-blue-50 to-blue-100/50 p-4 rounded-xl border border-blue-100">
-                  <BookOpen className="h-6 w-6 text-blue-500" />
-                  <div>
-                    <p className="text-sm font-semibold text-blue-800">Tipo</p>
-                    <p className="text-sm text-gray-600">Educativo</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-3 bg-gradient-to-r from-green-50 to-green-100/50 p-4 rounded-xl border border-green-100">
-                  <Award className="h-6 w-6 text-green-500" />
-                  <div>
-                    <p className="text-sm font-semibold text-green-800">Progresso</p>
-                    <p className="text-sm text-gray-600">{Math.round(progress)}%</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-3 bg-gradient-to-r from-orange-50 to-orange-100/50 p-4 rounded-xl border border-orange-100">
-                  <Award className="h-6 w-6 text-orange-500" />
-                  <div>
-                    <p className="text-sm font-semibold text-orange-800">Nível</p>
-                    <p className="text-sm text-gray-600">Básico</p>
-                  </div>
-                </div>
-              </motion.div>
-
-
-            </div>
-          </Card>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.7 }}
-          className="flex flex-col sm:flex-row justify-between items-center gap-4"
-        >
-          {/* Navigation and Home Button */}
-          <div className="flex items-center gap-3">
-            <Button
-              onClick={() => router.push('/')}
-              variant="outline"
-              size="lg"
-              className="border-purple-200 hover:bg-purple-50 transition-colors"
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4, duration: 0.6 }}
+              className="prose prose-purple max-w-none prose-headings:text-purple-800 prose-p:text-gray-700 prose-li:text-gray-700 prose-strong:text-purple-700 prose-a:text-purple-600 hover:prose-a:text-purple-800 mb-6"
             >
-              <Home className="mr-2 h-5 w-5" />
-              Início
-            </Button>
+              <div dangerouslySetInnerHTML={{ __html: modules[currentModule]?.content || '' }} />
+            </motion.div>
 
-            {currentModule > 0 && (
-              <Button
-                onClick={handlePrevious}
-                variant="outline"
-                size="lg"
-                className="border-purple-200 hover:bg-purple-50 transition-colors"
-              >
-                <ArrowLeft className="mr-2 h-5 w-5" />
-                Anterior
-              </Button>
-            )}
-          </div>
-
-          {/* Progress Info */}
-          <div className="text-center">
-            <p className="text-sm text-gray-600 mb-1">
-              Módulo {currentModule + 1} de {modules.length}
-            </p>
-            <div className="flex items-center space-x-1">
-              {modules.map((module, index) => (
-                <button
-                  key={index}
-                  type="button"
-                  onClick={() => handleModuleSelect(index)}
-                  className={`w-3 h-3 rounded-full transition-colors ${
-                    module.completed
-                      ? 'bg-green-500 hover:bg-green-600'
-                      : index === currentModule
-                        ? 'bg-purple-500 hover:bg-purple-600'
-                        : 'bg-purple-200 hover:bg-purple-300'
-                  }`}
-                  title={`Módulo ${index + 1}: ${module.title}`}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex items-center gap-3">
-            {currentModule < modules.length - 1 && !modules[currentModule]?.completed && (
-              <Button
-                onClick={handleNext}
-                variant="outline"
-                size="lg"
-                className="border-purple-200 hover:bg-purple-50 transition-colors"
-              >
-                Pular
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            )}
-
-            <Button
-              onClick={handleComplete}
-              size="lg"
-              className="relative overflow-hidden group bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 transition-all duration-300 shadow-md hover:shadow-lg px-8 py-6"
+            {/* Module Info Cards */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6, duration: 0.5 }}
+              className="grid grid-cols-2 md:grid-cols-4 gap-3 border-t border-purple-100/50 pt-4"
             >
-              <span className="relative z-10 flex items-center font-medium">
-                {modules[currentModule]?.completed
-                  ? (currentModule < modules.length - 1 ? 'Próximo' : 'Finalizar')
-                  : (currentModule < modules.length - 1 ? 'Concluir e Próximo' : 'Concluir Curso')
-                }
-                <motion.div
-                  animate={{ x: [0, 5, 0] }}
-                  transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-                >
-                  {modules[currentModule]?.completed ? (
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  ) : (
-                    <CheckCircle2 className="ml-2 h-5 w-5" />
-                  )}
-                </motion.div>
-              </span>
-              <span className="absolute inset-0 bg-gradient-to-r from-purple-700 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-            </Button>
-          </div>
+              <div className="flex items-center space-x-2 bg-gradient-to-r from-purple-50 to-purple-100/50 p-3 rounded-lg border border-purple-100">
+                <Clock className="h-5 w-5 text-purple-500" />
+                <div>
+                  <p className="text-xs font-semibold text-purple-800">Duração</p>
+                  <p className="text-xs text-gray-600">{modules[currentModule]?.duration || 0} min</p>
+                </div>
+              </div>
 
-        </motion.div>
+              <div className="flex items-center space-x-2 bg-gradient-to-r from-blue-50 to-blue-100/50 p-3 rounded-lg border border-blue-100">
+                <BookOpen className="h-5 w-5 text-blue-500" />
+                <div>
+                  <p className="text-xs font-semibold text-blue-800">Tipo</p>
+                  <p className="text-xs text-gray-600">Educativo</p>
+                </div>
+              </div>
 
-        {/* Support Group Button - Show when all modules are completed - Full Width */}
-        {modules.every(module => module.completed) && (
+              <div className="flex items-center space-x-2 bg-gradient-to-r from-green-50 to-green-100/50 p-3 rounded-lg border border-green-100">
+                <Award className="h-5 w-5 text-green-500" />
+                <div>
+                  <p className="text-xs font-semibold text-green-800">Progresso</p>
+                  <p className="text-xs text-gray-600">{Math.round(progress)}%</p>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-2 bg-gradient-to-r from-orange-50 to-orange-100/50 p-3 rounded-lg border border-orange-100">
+                <Award className="h-5 w-5 text-orange-500" />
+                <div>
+                  <p className="text-xs font-semibold text-orange-800">Nível</p>
+                  <p className="text-xs text-gray-600">Básico</p>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        </Section>
+
+        {/* Navigation Section */}
+        <Section spacing="sm">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.8 }}
-            className="w-full"
+            transition={{ duration: 0.5, delay: 0.7 }}
+            className="flex flex-col sm:flex-row justify-between items-center gap-4 p-4"
           >
-            <div className="bg-gradient-to-br from-green-50 via-green-100 to-emerald-50 p-8 md:p-12 rounded-2xl border border-green-200 shadow-xl">
+            {/* Navigation and Home Button */}
+            <div className="flex items-center gap-3">
+              <Button
+                onClick={() => router.push('/')}
+                variant="outline"
+                size="sm"
+                className="border-purple-200 hover:bg-purple-50 transition-colors"
+              >
+                <Home className="mr-2 h-4 w-4" />
+                Início
+              </Button>
+
+              {currentModule > 0 && (
+                <Button
+                  onClick={handlePrevious}
+                  variant="outline"
+                  size="sm"
+                  className="border-purple-200 hover:bg-purple-50 transition-colors"
+                >
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Anterior
+                </Button>
+              )}
+            </div>
+
+            {/* Progress Info */}
+            <div className="text-center">
+              <p className="text-sm text-gray-600 mb-1">
+                Módulo {currentModule + 1} de {modules.length}
+              </p>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex items-center gap-3">
+              {currentModule < modules.length - 1 && !modules[currentModule]?.completed && (
+                <Button
+                  onClick={handleNext}
+                  variant="outline"
+                  size="sm"
+                  className="border-purple-200 hover:bg-purple-50 transition-colors"
+                >
+                  Pular
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              )}
+
+              <Button
+                onClick={handleComplete}
+                size="sm"
+                className="relative overflow-hidden group bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 transition-all duration-300 shadow-md hover:shadow-lg px-6 py-3"
+              >
+                <span className="relative z-10 flex items-center font-medium">
+                  {modules[currentModule]?.completed
+                    ? (currentModule < modules.length - 1 ? 'Próximo' : 'Finalizar')
+                    : (currentModule < modules.length - 1 ? 'Concluir e Próximo' : 'Concluir Curso')
+                  }
+                  <motion.div
+                    animate={{ x: [0, 5, 0] }}
+                    transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+                  >
+                    {modules[currentModule]?.completed ? (
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    ) : (
+                      <CheckCircle2 className="ml-2 h-4 w-4" />
+                    )}
+                  </motion.div>
+                </span>
+                <span className="absolute inset-0 bg-gradient-to-r from-purple-700 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+              </Button>
+            </div>
+          </motion.div>
+        </Section>
+
+        {/* Support Group Button - Show when all modules are completed */}
+        {modules.every(module => module.completed) && (
+          <Section spacing="sm" background="gradient">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.8 }}
+              className="p-6"
+            >
               <motion.div
                 initial={{ scale: 0.8 }}
                 animate={{ scale: 1 }}
@@ -1101,9 +892,9 @@ export default function Education() {
                       repeat: Infinity,
                       ease: "easeInOut"
                     }}
-                    className="bg-gradient-to-r from-green-100 to-emerald-100 p-6 rounded-full shadow-lg"
+                    className="bg-gradient-to-r from-green-100 to-emerald-100 p-4 rounded-full shadow-md"
                   >
-                    <Users className="w-12 h-12 text-green-600" />
+                    <Users className="w-8 h-8 text-green-600" />
                   </motion.div>
                 </div>
 
@@ -1113,7 +904,7 @@ export default function Education() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 1.2, duration: 0.5 }}
-                    className="text-2xl md:text-3xl font-bold text-green-800"
+                    className="text-xl font-bold text-green-800"
                   >
                     🎉 Parabéns! Você completou todos os módulos!
                   </motion.h3>
@@ -1122,39 +913,13 @@ export default function Education() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 1.4, duration: 0.5 }}
-                    className="text-lg text-green-700 max-w-2xl mx-auto leading-relaxed"
+                    className="text-green-700 leading-relaxed"
                   >
                     Agora você pode se conectar com outras mulheres que compartilham experiências similares
                     no nosso grupo de apoio. Junte-se ao <strong>Círculo Endo</strong> e continue sua jornada
                     com o suporte de uma comunidade acolhedora.
                   </motion.p>
                 </div>
-
-                {/* Features Grid */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.6, duration: 0.5 }}
-                  className="grid md:grid-cols-3 gap-6 my-8"
-                >
-                  <div className="bg-white/80 backdrop-blur-sm p-4 rounded-xl border border-green-100 shadow-sm">
-                    <div className="text-green-600 mb-2">💬</div>
-                    <h4 className="font-semibold text-green-800 mb-1">Conversas Seguras</h4>
-                    <p className="text-sm text-green-600">Compartilhe experiências em um ambiente protegido</p>
-                  </div>
-
-                  <div className="bg-white/80 backdrop-blur-sm p-4 rounded-xl border border-green-100 shadow-sm">
-                    <div className="text-green-600 mb-2">👥</div>
-                    <h4 className="font-semibold text-green-800 mb-1">Comunidade Ativa</h4>
-                    <p className="text-sm text-green-600">Conecte-se com mulheres que entendem sua jornada</p>
-                  </div>
-
-                  <div className="bg-white/80 backdrop-blur-sm p-4 rounded-xl border border-green-100 shadow-sm">
-                    <div className="text-green-600 mb-2">🩺</div>
-                    <h4 className="font-semibold text-green-800 mb-1">Suporte Profissional</h4>
-                    <p className="text-sm text-green-600">Mediação por profissionais de saúde qualificados</p>
-                  </div>
-                </motion.div>
 
                 {/* Call to Action Button */}
                 <motion.div
@@ -1166,28 +931,16 @@ export default function Education() {
                   <Button
                     onClick={() => router.push('/support-group')}
                     size="lg"
-                    className="w-full md:w-auto px-12 py-6 text-lg font-semibold bg-gradient-to-r from-green-600 via-green-500 to-emerald-500 hover:from-green-700 hover:via-green-600 hover:to-emerald-600 text-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
+                    className="px-8 py-4 font-semibold bg-gradient-to-r from-green-600 via-green-500 to-emerald-500 hover:from-green-700 hover:via-green-600 hover:to-emerald-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
                   >
-                    <Users className="mr-3 h-6 w-6" />
+                    <Users className="mr-3 h-5 w-5" />
                     Ir para Grupo de Apoio - Círculo Endo
-                    <ArrowRight className="ml-3 h-6 w-6" />
+                    <ArrowRight className="ml-3 h-5 w-5" />
                   </Button>
                 </motion.div>
-
-                {/* Additional Info */}
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 2.0, duration: 0.5 }}
-                  className="pt-4 border-t border-green-200/50"
-                >
-                  <p className="text-sm text-green-600">
-                    ✨ Sessões semanais • Ambiente seguro • Participação gratuita
-                  </p>
-                </motion.div>
               </motion.div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </Section>
         )}
       </div>
     </PageLayout>

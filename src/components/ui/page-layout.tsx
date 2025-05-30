@@ -2,17 +2,19 @@
 
 import { motion } from 'framer-motion';
 import { PageHeader } from './page-header';
+import { AppHeader } from './app-header';
+import { Container } from './container';
 
 interface PageLayoutProps {
   title: string;
   subtitle?: string;
   gradient?: string;
   children: React.ReactNode;
-  maxWidth?: string;
+  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
   className?: string;
   showCard?: boolean;
   showPattern?: boolean;
-  showLogo?: boolean;
+  containerPadding?: 'none' | 'sm' | 'md' | 'lg';
 }
 
 export function PageLayout({
@@ -20,11 +22,11 @@ export function PageLayout({
   subtitle,
   gradient,
   children,
-  maxWidth = "max-w-6xl",
+  maxWidth = "lg",
   className = "",
-  showCard = true,
+  showCard = false,
   showPattern = true,
-  showLogo = true
+  containerPadding = 'md',
 }: PageLayoutProps) {
   if (!showCard) {
     return (
@@ -34,13 +36,14 @@ export function PageLayout({
         exit={{ opacity: 0 }}
         className={`min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 ${className}`}
       >
+        <AppHeader />
+        
         {/* Header */}
         <PageHeader
           title={title}
           subtitle={subtitle}
           gradient={gradient}
           showPattern={showPattern}
-          showLogo={showLogo}
         />
 
         {/* Content */}
@@ -48,9 +51,10 @@ export function PageLayout({
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.4, duration: 0.6 }}
-          className={`${maxWidth} mx-auto p-6 md:p-8 lg:p-12`}
         >
-          {children}
+          <Container size={maxWidth} padding={containerPadding}>
+            {children}
+          </Container>
         </motion.div>
       </motion.div>
     );
@@ -61,27 +65,33 @@ export function PageLayout({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className={`min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 py-4 md:py-8 ${className}`}
+      className={`min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 ${className}`}
     >
-      <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl border border-purple-100 overflow-hidden mx-4 md:mx-8 lg:mx-auto lg:max-w-7xl">
-        {/* Header */}
-        <PageHeader
-          title={title}
-          subtitle={subtitle}
-          gradient={gradient}
-          showPattern={showPattern}
-          showLogo={showLogo}
-        />
+      <AppHeader />
+      
+      <div className="py-4 md:py-6">
+        <Container size="xl" padding="sm">
+          <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-purple-100/50 overflow-hidden">
+            {/* Header */}
+            <PageHeader
+              title={title}
+              subtitle={subtitle}
+              gradient={gradient}
+              showPattern={showPattern}
+            />
 
-        {/* Content */}
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.4, duration: 0.6 }}
-          className={`${maxWidth} mx-auto p-6 md:p-8 lg:p-12`}
-        >
-          {children}
-        </motion.div>
+            {/* Content */}
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.4, duration: 0.6 }}
+            >
+              <Container size={maxWidth} padding={containerPadding}>
+                {children}
+              </Container>
+            </motion.div>
+          </div>
+        </Container>
       </div>
     </motion.div>
   );
