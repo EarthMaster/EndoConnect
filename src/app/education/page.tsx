@@ -737,7 +737,7 @@ export default function Education() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4, duration: 0.6 }}
-              className="prose prose-purple max-w-none prose-headings:text-purple-800 prose-p:text-gray-700 prose-li:text-gray-700 prose-strong:text-purple-700 prose-a:text-purple-600 hover:prose-a:text-purple-800 mb-6"
+              className="prose prose-purple max-w-none prose-headings:text-purple-900 prose-p:text-gray-800 prose-li:text-gray-800 prose-strong:text-purple-800 prose-a:text-purple-600 hover:prose-a:text-purple-700 prose-blockquote:text-purple-700 prose-blockquote:border-purple-300 prose-code:text-purple-800 prose-code:bg-purple-50 mb-6"
             >
               <div dangerouslySetInnerHTML={{ __html: modules[currentModule]?.content || '' }} />
             </motion.div>
