@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
@@ -18,44 +18,68 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<any>(null);
   const router = useRouter();
   const pathname = usePathname();
+  const isMountedRef = useRef(true);
+  const hasRedirectedRef = useRef(false);
 
   useEffect(() => {
+    isMountedRef.current = true;
+    hasRedirectedRef.current = false;
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!isMountedRef.current) return;
+
       if (event === 'SIGNED_IN') {
         setUser(session?.user ?? null);
-        // Only redirect to welcome if on a public route
-        if (publicRoutes.includes(pathname)) {
-        router.push('/welcome');
+        // Only redirect to welcome if on a public route and haven't redirected yet
+        if (publicRoutes.includes(pathname) && !hasRedirectedRef.current) {
+          hasRedirectedRef.current = true;
+          router.push('/welcome');
         }
       } else if (event === 'SIGNED_OUT') {
         setUser(null);
-        // Only redirect to signin if not on a public route
-        if (!publicRoutes.includes(pathname)) {
-        router.push('/signin');
+        // Only redirect to signin if not on a public route and haven't redirected yet
+        if (!publicRoutes.includes(pathname) && !hasRedirectedRef.current) {
+          hasRedirectedRef.current = true;
+          router.push('/signin');
         }
       }
     });
 
     // Check initial auth state
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      
-      // Only redirect if:
-      // 1. No session and not on a public route -> redirect to signin
-      // 2. Has session and on a public route -> redirect to welcome
-      if (!session && !publicRoutes.includes(pathname)) {
-        router.push('/signin');
-      } else if (session && publicRoutes.includes(pathname)) {
-        router.push('/welcome');
+    const checkInitialAuth = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (!isMountedRef.current) return;
+        
+        setUser(session?.user ?? null);
+        
+        // Only redirect if:
+        // 1. No session and not on a public route -> redirect to signin
+        // 2. Has session and on a public route -> redirect to welcome
+        if (!session && !publicRoutes.includes(pathname) && !hasRedirectedRef.current) {
+          hasRedirectedRef.current = true;
+          router.push('/signin');
+        } else if (session && publicRoutes.includes(pathname) && !hasRedirectedRef.current) {
+          hasRedirectedRef.current = true;
+          router.push('/welcome');
+        }
+      } catch (error) {
+        console.error('Error checking initial auth state:', error);
       }
-    });
+    };
+
+    checkInitialAuth();
 
     return () => {
+      isMountedRef.current = false;
       subscription.unsubscribe();
     };
   }, [router, pathname]);
 
   const signIn = async () => {
+    if (!isMountedRef.current) return;
+    
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
@@ -69,6 +93,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signOut = async () => {
+    if (!isMountedRef.current) return;
+    
     const { error } = await supabase.auth.signOut();
     if (error) {
       console.error('Error signing out:', error.message);

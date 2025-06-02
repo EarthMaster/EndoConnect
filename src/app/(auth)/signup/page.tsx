@@ -1,10 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import { authService } from '@/lib/auth-service'
-import Image from 'next/image'
 import Link from 'next/link'
 import { FcGoogle } from 'react-icons/fc'
 import { Button } from "@/components/ui/button";
@@ -22,9 +21,24 @@ export default function SignUp() {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
+    confirmPassword: '',
     firstName: '',
     lastName: '',
   })
+  
+  // Add refs to track component state
+  const isMountedRef = useRef(true)
+  const errorTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  useEffect(() => {
+    isMountedRef.current = true
+    return () => {
+      isMountedRef.current = false
+      if (errorTimeoutRef.current) {
+        clearTimeout(errorTimeoutRef.current)
+      }
+    }
+  }, [])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -36,36 +50,71 @@ export default function SignUp() {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!isMountedRef.current) return
+    
+    // Validate password confirmation
+    if (formData.password !== formData.confirmPassword) {
+      setError('As senhas não coincidem')
+      return
+    }
+
+    if (formData.password.length < 6) {
+      setError('A senha deve ter pelo menos 6 caracteres')
+      return
+    }
+    
     setIsLoading(true)
     setError('')
 
     try {
       console.log(formData);
       await authService.signUp(formData)
-      setEmail(formData.email)
-      setShowConfirmation(true)
+      if (isMountedRef.current) {
+        setEmail(formData.email)
+        setShowConfirmation(true)
+      }
     } catch (err: any) {
-      setError(err.message || 'Failed to sign up')
+      if (isMountedRef.current) {
+        setError(err.message || 'Falha ao criar conta')
+      }
     } finally {
-      setIsLoading(false)
+      if (isMountedRef.current) {
+        setIsLoading(false)
+      }
     }
   }
 
   const handleResendEmail = async () => {
+    if (!isMountedRef.current) return
+    
     setIsLoading(true)
     setError('')
 
     try {
       await authService.resendConfirmationEmail(email)
-      setError('Confirmation email resent! Please check your inbox.')
+      if (isMountedRef.current) {
+        setError('Email de confirmação reenviado! Verifique sua caixa de entrada.')
+        // Clear the success message after 5 seconds
+        errorTimeoutRef.current = setTimeout(() => {
+          if (isMountedRef.current) {
+            setError('')
+          }
+        }, 5000)
+      }
     } catch (err: any) {
-      setError(err.message || 'Failed to resend confirmation email')
+      if (isMountedRef.current) {
+        setError(err.message || 'Falha ao reenviar email de confirmação')
+      }
     } finally {
-      setIsLoading(false)
+      if (isMountedRef.current) {
+        setIsLoading(false)
+      }
     }
   }
 
   const handleGoogleSignIn = async () => {
+    if (!isMountedRef.current) return
+    
     try {
       setIsLoading(true);
       setError("");
@@ -83,17 +132,23 @@ export default function SignUp() {
 
       if (error) throw error;
     } catch (err: any) {
-      setError(err.message || 'Failed to sign up with Google');
+      if (isMountedRef.current) {
+        setError(err.message || 'Falha ao entrar com Google');
+      }
     } finally {
-      setIsLoading(false);
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
     }
   };
 
   if (showConfirmation) {
     return (
       <motion.div
+        key="confirmation"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
         className="min-h-screen flex items-center justify-center bg-gradient-to-b from-purple-50 to-white p-6"
       >
         <motion.div
@@ -121,13 +176,15 @@ export default function SignUp() {
             </motion.p>
           </div>
 
-          <AnimatePresence>
+          <AnimatePresence mode="wait">
             {error && (
               <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="flex items-start space-x-3 bg-red-50 text-red-600 p-4 rounded-lg text-sm"
+                key="error-confirmation"
+                initial={{ opacity: 0, y: -10, height: 0 }}
+                animate={{ opacity: 1, y: 0, height: "auto" }}
+                exit={{ opacity: 0, y: -10, height: 0 }}
+                transition={{ duration: 0.2 }}
+                className="flex items-start space-x-3 bg-red-50 text-red-600 p-4 rounded-lg text-sm overflow-hidden"
               >
                 <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
                 <p>{error}</p>
@@ -168,8 +225,10 @@ export default function SignUp() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-4 bg-gradient-to-b from-purple-50 to-white">
       <motion.div
+        key="signup-form"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
         transition={{ duration: 0.5 }}
       >
         <Card className="w-full max-w-md p-6 space-y-6">
@@ -185,13 +244,15 @@ export default function SignUp() {
             </p>
           </motion.div>
 
-          <AnimatePresence>
+          <AnimatePresence mode="wait">
             {error && (
               <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="flex items-start space-x-3 bg-red-50 text-red-600 p-4 rounded-lg text-sm"
+                key="error-signup"
+                initial={{ opacity: 0, y: -10, height: 0 }}
+                animate={{ opacity: 1, y: 0, height: "auto" }}
+                exit={{ opacity: 0, y: -10, height: 0 }}
+                transition={{ duration: 0.2 }}
+                className="flex items-start space-x-3 bg-red-50 text-red-600 p-4 rounded-lg text-sm overflow-hidden"
               >
                 <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
                 <p>{error}</p>
@@ -212,18 +273,42 @@ export default function SignUp() {
               transition={{ delay: 0.4 }}
               className="space-y-2"
             >
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
                 Nome
               </label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <Input
-                  id="name"
+                  id="firstName"
                   type="text"
-                  placeholder="Seu nome completo"
+                  placeholder="Seu nome"
                   required
                   name="firstName"
                   value={formData.firstName}
+                  onChange={handleInputChange}
+                  className="pl-10"
+                />
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.45 }}
+              className="space-y-2"
+            >
+              <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
+                Sobrenome
+              </label>
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Input
+                  id="lastName"
+                  type="text"
+                  placeholder="Seu sobrenome"
+                  required
+                  name="lastName"
+                  value={formData.lastName}
                   onChange={handleInputChange}
                   className="pl-10"
                 />
@@ -274,6 +359,7 @@ export default function SignUp() {
                   value={formData.password}
                   onChange={handleInputChange}
                   className="pl-10"
+                  minLength={6}
                 />
               </div>
             </motion.div>
@@ -284,17 +370,21 @@ export default function SignUp() {
               transition={{ delay: 0.7 }}
               className="space-y-2"
             >
-              <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
                 Confirmar Senha
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <Input
-                  id="confirm-password"
+                  id="confirmPassword"
                   type="password"
                   placeholder="••••••••"
                   required
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
                   className="pl-10"
+                  minLength={6}
                 />
               </div>
             </motion.div>
@@ -303,21 +393,21 @@ export default function SignUp() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.8 }}
-              className="flex items-center"
+              className="flex items-start space-x-3"
             >
               <input
                 id="terms"
                 type="checkbox"
-                className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
+                className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded mt-0.5"
                 required
               />
-              <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
+              <label htmlFor="terms" className="block text-sm text-gray-700 leading-relaxed">
                 Eu concordo com os{' '}
-                <Link href="/terms" className="text-purple-600 hover:text-purple-700">
+                <Link href="/terms" className="text-purple-600 hover:text-purple-700 underline">
                   Termos de Uso
                 </Link>{' '}
                 e{' '}
-                <Link href="/privacy" className="text-purple-600 hover:text-purple-700">
+                <Link href="/privacy" className="text-purple-600 hover:text-purple-700 underline">
                   Política de Privacidade
                 </Link>
               </label>
@@ -360,6 +450,7 @@ export default function SignUp() {
               </div>
 
               <Button
+                type="button"
                 onClick={handleGoogleSignIn}
                 disabled={isLoading}
                 variant="outline"
