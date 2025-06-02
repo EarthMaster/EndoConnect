@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/providers/AuthProvider";
 import { supabase } from '@/lib/supabase';
@@ -9,16 +9,27 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
-import { AlertCircle, Loader2, Mail, Lock, ArrowRight } from 'lucide-react';
+import { AlertCircle, Loader2, Mail, Lock, ArrowRight, Eye, EyeOff, Heart, Shield, Sparkles } from 'lucide-react';
 
 export default function SignIn() {
   const { signIn } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const isMountedRef = useRef(true);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   const handleSignin = async () => {
+    if (!isMountedRef.current) return;
+    
     try {
       setIsLoading(true);
       setError("");
@@ -30,13 +41,19 @@ export default function SignIn() {
 
       if (error) throw error;
     } catch (error: any) {
-      setError(error.message || "Failed to sign in");
+      if (isMountedRef.current) {
+        setError(error.message || "Falha ao entrar na conta");
+      }
     } finally {
-      setIsLoading(false);
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
     }
   };
 
   const handleGoogleSignIn = async () => {
+    if (!isMountedRef.current) return;
+    
     try {
       setIsLoading(true);
       setError("");
@@ -54,41 +71,63 @@ export default function SignIn() {
 
       if (error) throw error;
     } catch (error: any) {
-      setError(error.message || "Failed to sign in with Google");
+      if (isMountedRef.current) {
+        setError(error.message || "Falha ao entrar com Google");
+      }
     } finally {
-      setIsLoading(false);
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
     }
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-purple-50 via-white to-purple-50">
+    <main className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50">
       <div className="container mx-auto px-4 py-8 md:py-16">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.6 }}
+          className="max-w-md mx-auto"
         >
-          <Card className="max-w-md mx-auto p-6 md:p-8 shadow-lg">
+          <Card className="p-8 shadow-xl bg-white/80 backdrop-blur-sm border-0">
             <div className="space-y-8">
+              {/* Header */}
               <motion.div
-                initial={{ opacity: 0, y: -10 }}
+                initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="text-center space-y-2"
+                className="text-center space-y-4"
               >
-                <h1 className="text-3xl font-bold text-purple-900">Bem-vinda de volta</h1>
-                <p className="text-gray-600">
+                <div className="flex items-center justify-center space-x-2 mb-4">
+                  <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                    <Heart className="w-4 h-4 text-white" />
+                  </div>
+                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                    <Shield className="w-4 h-4 text-white" />
+                  </div>
+                  <div className="w-8 h-8 bg-gradient-to-br from-pink-500 to-purple-500 rounded-full flex items-center justify-center">
+                    <Sparkles className="w-4 h-4 text-white" />
+                  </div>
+                </div>
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-800 to-pink-700 bg-clip-text text-transparent">
+                  Bem-vinda de volta
+                </h1>
+                <p className="text-gray-600 leading-relaxed">
                   Entre com sua conta para continuar sua jornada
                 </p>
               </motion.div>
 
-              <AnimatePresence>
+              {/* Error Display */}
+              <AnimatePresence mode="wait">
                 {error && (
                   <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="flex items-start space-x-3 bg-red-50 text-red-600 p-4 rounded-lg text-sm"
+                    key="signin-error"
+                    initial={{ opacity: 0, y: -10, height: 0 }}
+                    animate={{ opacity: 1, y: 0, height: "auto" }}
+                    exit={{ opacity: 0, y: -10, height: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="flex items-start space-x-3 bg-red-50 text-red-600 p-4 rounded-lg text-sm border border-red-200 overflow-hidden"
                   >
                     <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
                     <p>{error}</p>
@@ -96,6 +135,7 @@ export default function SignIn() {
                 )}
               </AnimatePresence>
 
+              {/* Form */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -103,6 +143,7 @@ export default function SignIn() {
                 className="space-y-6"
               >
                 <div className="space-y-4">
+                  {/* Email Field */}
                   <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -119,11 +160,13 @@ export default function SignIn() {
                         placeholder="Digite seu email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="pl-10"
+                        className="pl-10 border-gray-200 focus:border-purple-300 focus:ring-purple-200"
+                        disabled={isLoading}
                       />
                     </div>
                   </motion.div>
 
+                  {/* Password Field */}
                   <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -136,16 +179,30 @@ export default function SignIn() {
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                       <Input
-                        type="password"
-                        placeholder="• • • • • • • •"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="••••••••"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="pl-10"
+                        className="pl-10 pr-10 border-gray-200 focus:border-purple-300 focus:ring-purple-200"
+                        disabled={isLoading}
                       />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                        disabled={isLoading}
+                      >
+                        {showPassword ? (
+                          <EyeOff className="w-5 h-5" />
+                        ) : (
+                          <Eye className="w-5 h-5" />
+                        )}
+                      </button>
                     </div>
                   </motion.div>
                 </div>
 
+                {/* Forgot Password */}
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -154,12 +211,14 @@ export default function SignIn() {
                 >
                   <Button
                     variant="link"
-                    className="text-sm text-purple-600 hover:text-purple-700"
+                    className="text-sm text-purple-600 hover:text-purple-700 p-0 h-auto"
+                    disabled={isLoading}
                   >
                     Esqueceu a senha?
                   </Button>
                 </motion.div>
 
+                {/* Submit Buttons */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -168,8 +227,8 @@ export default function SignIn() {
                 >
                   <Button
                     onClick={handleSignin}
-                    disabled={isLoading}
-                    className="w-full py-6"
+                    disabled={isLoading || !email || !password}
+                    className="w-full py-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 transition-all duration-300"
                     size="lg"
                   >
                     {isLoading ? (
@@ -190,7 +249,7 @@ export default function SignIn() {
                       <div className="w-full border-t border-gray-200" />
                     </div>
                     <div className="relative flex justify-center text-sm">
-                      <span className="px-2 bg-white text-gray-500">
+                      <span className="px-4 bg-white text-gray-500">
                         Ou continue com
                       </span>
                     </div>
@@ -200,7 +259,7 @@ export default function SignIn() {
                     onClick={handleGoogleSignIn}
                     disabled={isLoading}
                     variant="outline"
-                    className="w-full py-6"
+                    className="w-full py-6 border-gray-200 hover:bg-gray-50 transition-all duration-300"
                     size="lg"
                   >
                     <FcGoogle className="w-5 h-5 mr-2" />
@@ -208,6 +267,7 @@ export default function SignIn() {
                   </Button>
                 </motion.div>
 
+                {/* Footer */}
                 <motion.p
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
