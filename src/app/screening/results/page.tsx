@@ -28,7 +28,7 @@ export default function ScreeningResults() {
   useEffect(() => {
     const fetchResults = async () => {
       if (!user?.id) {
-        router.push('/signin');
+        router.push('/auth/signin');
         return;
       }
 

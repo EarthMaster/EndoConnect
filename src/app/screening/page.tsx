@@ -61,7 +61,7 @@ export default function Screening() {
 
   useEffect(() => {
     if (!user && !isLoading) {
-      router.push('/signin');
+      router.push('/auth/signin');
     }
   }, [user, isLoading, router]);
 

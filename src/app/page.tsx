@@ -10,7 +10,7 @@ export default function Home() {
 
   useEffect(() => {
     if (!user) {
-      router.push('/signin');
+      router.push('/auth/signin');
     } else {
       router.push('/welcome');
     }

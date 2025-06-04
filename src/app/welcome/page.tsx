@@ -18,7 +18,7 @@ export default function Welcome() {
 
   useEffect(() => {
     if (!user) {
-      router.push('/signin');
+      router.push('/auth/signin');
     }
   }, [user, router]);
 

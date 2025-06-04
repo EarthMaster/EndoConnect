@@ -7,7 +7,7 @@ import Link from "next/link";
 
 export default function SignUp() {
   const { signIn } = useAuth();
-  const [username, setUsername] = useState("");
+  const [fullname, setFullname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -22,20 +22,14 @@ export default function SignUp() {
     setMessage("");
 
     // Validation
-    if (!username.trim()) {
-      setError("Username is required");
+    if (!fullname.trim()) {
+      setError("Full name is required");
       setLoading(false);
       return;
     }
 
-    if (username.length < 3) {
-      setError("Username must be at least 3 characters long");
-      setLoading(false);
-      return;
-    }
-
-    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-      setError("Username can only contain letters, numbers, and underscores");
+    if (fullname.trim().length < 2) {
+      setError("Full name must be at least 2 characters long");
       setLoading(false);
       return;
     }
@@ -58,8 +52,8 @@ export default function SignUp() {
       options: {
         emailRedirectTo: `${window.location.origin}/auth/confirm-email`,
         data: {
-          username: username.trim(),
-          display_name: username.trim()
+          full_name: fullname.trim(),
+          display_name: fullname.trim()
         }
       }
     });
@@ -158,19 +152,19 @@ export default function SignUp() {
           {/* Email Sign Up Form */}
           <form className="space-y-4" onSubmit={handleEmailSignUp}>
             <div>
-              <label htmlFor="username" className="sr-only">
-                Username
+              <label htmlFor="fullname" className="sr-only">
+                Full Name
               </label>
               <input
-                id="username"
-                name="username"
+                id="fullname"
+                name="fullname"
                 type="text"
-                autoComplete="username"
+                autoComplete="fullname"
                 required
                 className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Username (min. 3 characters)"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Full Name (min. 2 characters)"
+                value={fullname}
+                onChange={(e) => setFullname(e.target.value)}
               />
             </div>
             <div>

@@ -15,10 +15,10 @@ export function AppHeader() {
 
   const handleSignOut = async () => {
     await signOut();
-    router.push('/signin');
+    router.push('/auth/signin');
   };
 
-  const isAuthPage = pathname?.includes('/signin') || pathname?.includes('/signup');
+  const isAuthPage = pathname?.includes('/auth/signin') || pathname?.includes('/signup');
 
   if (isAuthPage) {
     return null;
@@ -54,7 +54,7 @@ export function AppHeader() {
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2 text-sm text-gray-600">
                 <User className="w-4 h-4" />
-                <span>Olá, {user.email?.split('@')[0]}</span>
+                <span>{user.user_metadata?.full_name || user.user_metadata?.display_name || user.email?.split('@')[0]}</span>
               </div>
               <Button
                 variant="outline"
