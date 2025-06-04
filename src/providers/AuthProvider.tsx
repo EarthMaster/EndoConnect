@@ -12,7 +12,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const publicRoutes = ['/signin', '/signup', '/auth/callback'];
+const publicRoutes = ['/auth/signin', '/auth/signup', '/auth/callback'];
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<any>(null);
@@ -40,7 +40,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Only redirect to signin if not on a public route and haven't redirected yet
         if (!publicRoutes.includes(pathname) && !hasRedirectedRef.current) {
           hasRedirectedRef.current = true;
-          router.push('/signin');
+          router.push('/auth/signin');
         }
       }
     });
@@ -59,7 +59,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // 2. Has session and on a public route -> redirect to welcome
         if (!session && !publicRoutes.includes(pathname) && !hasRedirectedRef.current) {
           hasRedirectedRef.current = true;
-          router.push('/signin');
+          router.push('/auth/signin');
         } else if (session && publicRoutes.includes(pathname) && !hasRedirectedRef.current) {
           hasRedirectedRef.current = true;
           router.push('/welcome');
@@ -83,7 +83,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}${pathname}`
+        redirectTo: `${window.location.origin}/auth/callback`
       }
     });
 
