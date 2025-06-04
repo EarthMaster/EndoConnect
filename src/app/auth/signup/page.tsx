@@ -56,7 +56,7 @@ export default function SignUp() {
       email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: `${window.location.origin}/auth/confirm-email`,
         data: {
           username: username.trim(),
           display_name: username.trim()
@@ -69,7 +69,8 @@ export default function SignUp() {
     if (error) {
       setError(error.message);
     } else {
-      setMessage("Check your email for a confirmation link!");
+      // Redirect to the dedicated email confirmation page
+      window.location.href = '/auth/confirm-email';
     }
   };
 

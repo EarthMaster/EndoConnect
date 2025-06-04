@@ -12,7 +12,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const publicRoutes = ['/auth/signin', '/auth/signup', '/auth/callback'];
+const publicRoutes = ['/auth/signin', '/auth/signup', '/auth/callback', '/auth/confirm-email'];
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<any>(null);
